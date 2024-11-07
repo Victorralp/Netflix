@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netflix - Sign In</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+                        url('background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+        }
+
+        .header {
+            padding: 20px 40px;
+        }
+
+        .netflix-logo {
+            width: 150px;
+        }
+
+        .signin-container {
+            max-width: 450px;
+            margin: 40px auto;
+            padding: 60px 68px 40px;
+            background-color: rgba(0, 0, 0, 0.75);
+            border-radius: 4px;
+        }
+
+        h1 {
+            margin-bottom: 28px;
+        }
+
+        .form-group {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .form-input {
+            width: 100%;
+            height: 50px;
+            padding: 16px 20px;
+            border: none;
+            border-radius: 4px;
+            background: #333;
+            color: white;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            background: #454545;
+            outline: none;
+        }
+
+        .signin-button {
+            width: 100%;
+            padding: 16px;
+            margin: 24px 0 12px;
+            background: #e50914;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .signin-button:hover {
+            background: #f40612;
+            transform: scale(1.02);
+        }
+
+        .remember-me {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #b3b3b3;
+            font-size: 13px;
+        }
+
+        .help-section {
+            margin-top: 50px;
+            color: #b3b3b3;
+        }
+
+        .help-section a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .help-section a:hover {
+            text-decoration: underline;
+        }
+
+        .new-to-netflix {
+            color: #737373;
+            margin-top: 16px;
+        }
+
+        .new-to-netflix a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .new-to-netflix a:hover {
+            text-decoration: underline;
+        }
+
+        .recaptcha-terms {
+            font-size: 13px;
+            color: #8c8c8c;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="netflix-logo.png" alt="Netflix" class="netflix-logo">
+    </div>
+
+    <div class="signin-container">
+        <h1>Sign In</h1>
+        <form>
+            <div class="form-group">
+                <input type="email" class="form-input" placeholder="Email or phone number" required>
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-input" placeholder="Password" required>
+            </div>
+            <button type="submit" class="signin-button">Sign In</button>
+            
+            <div class="remember-me">
+                <label>
+                    <input type="checkbox"> Remember me
+                </label>
+                <a href="#">Need help?</a>
+            </div>
+
+            <div class="help-section">
+                <div class="new-to-netflix">
+                    New to Netflix? <a href="index.html">Sign up now</a>
+                </div>
+                <div class="recaptcha-terms">
+                    This page is protected by Google reCAPTCHA to ensure you're not a bot. 
+                    <a href="#">Learn more.</a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Add smooth transitions and animations
+        document.querySelectorAll('.form-input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.classList.add('focused');
+            });
+            
+            input.addEventListener('blur', function() {
+                if (!this.value) {
+                    this.parentElement.classList.remove('focused');
+                }
+            });
+        });
+
+        // Add form submission handling
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Basic validation
+            const email = document.querySelector('input[type="email"]').value;
+            const password = document.querySelector('input[type="password"]').value;
+            
+            if (email && password) {
+                window.location.href = 'profiles.html';
+            }
+        });
+    </script>
+</body>
+</html> 

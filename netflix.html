@@ -7,7 +7,40 @@
     <title>Netflix</title>
     <link rel="stylesheet" href="netflix.css">
     <style>
+        /* Add smooth transitions */
+        .question, #signIn, #getStarted, .row {
+            transition: all 0.3s ease-in-out;
+        }
 
+        /* Hover effects */
+        .question:hover {
+            transform: scale(1.02);
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        #signIn:hover, #getStarted:hover {
+            background: #f40612;
+            transform: scale(1.05);
+        }
+
+        /* Fade-in animation for rows */
+        .row {
+            opacity: 0;
+            animation: fadeIn 1s forwards;
+            animation-delay: calc(var(--order) * 0.2s);
+        }
+
+        @keyframes fadeIn {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 </head>
 
@@ -24,7 +57,7 @@
                     </path>
                 </g>
             </svg>
-            <button id="signIn">Sign In</button>
+            <button id="signIn" onclick="window.location.href='signin.html'">Sign In</button>
         </div>
         <div id="info_register">
 

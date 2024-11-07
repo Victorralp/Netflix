@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netflix - Browse</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #141414;
+            color: white;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%);
+            padding: 0 4%;
+            z-index: 1000;
+            transition: background-color 0.3s;
+        }
+
+        .navbar.scrolled {
+            background: #141414;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            height: 68px;
+        }
+
+        .netflix-logo {
+            height: 25px;
+            margin-right: 25px;
+        }
+
+        .nav-item {
+            color: #e5e5e5;
+            text-decoration: none;
+            margin-right: 20px;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .nav-item:hover {
+            color: #b3b3b3;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 80vh;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.8)), 
+                        url('hero-bg.jpg') no-repeat center center;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            padding: 0 4%;
+        }
+
+        .hero-content {
+            max-width: 600px;
+            margin-top: 80px;
+        }
+
+        .hero-title {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .play-button, .more-info {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.2em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+
+        .play-button {
+            background: white;
+            color: black;
+        }
+
+        .more-info {
+            background: rgba(109, 109, 110, 0.7);
+            color: white;
+        }
+
+        .play-button:hover, .more-info:hover {
+            transform: scale(1.05);
+        }
+
+        /* Rows Section */
+        .row {
+            margin: 3vw 0;
+            padding: 0 4%;
+        }
+
+        .row-title {
+            font-size: 1.6vw;
+            margin-bottom: 10px;
+            color: #e5e5e5;
+        }
+
+        .movies-slider {
+            display: flex;
+            overflow-x: auto;
+            gap: 8px;
+            padding: 20px 0;
+            scroll-behavior: smooth;
+        }
+
+        .movies-slider::-webkit-scrollbar {
+            display: none;
+        }
+
+        .movie-card {
+            flex: 0 0 auto;
+            width: 240px;
+            height: 135px;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .movie-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .movie-card:hover {
+            transform: scale(1.4);
+            z-index: 2;
+        }
+
+        /* Profile Menu */
+        .profile-menu {
+            margin-left: auto;
+            position: relative;
+        }
+
+        .profile-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Search Styles */
+        .search-container {
+            position: relative;
+            margin-left: 20px;
+        }
+
+        .search-input {
+            background: transparent;
+            border: 1px solid #fff;
+            color: white;
+            padding: 5px 30px 5px 10px;
+            border-radius: 4px;
+            width: 0;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .search-container:hover .search-input,
+        .search-input:focus {
+            width: 200px;
+            opacity: 1;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+
+        /* Modal Styles */
+        .movie-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            position: relative;
+            width: 85%;
+            margin: 2% auto;
+            background: #181818;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .modal-hero {
+            position: relative;
+            height: 60vh;
+        }
+
+        .modal-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .modal-hero-content {
+            position: absolute;
+            bottom: 0;
+            padding: 30px;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+        }
+
+        .modal-title {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .add-list, .rate-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.7);
+            background: rgba(0,0,0,0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-info {
+            padding: 30px;
+        }
+
+        .modal-details {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .match {
+            color: #46d369;
+            font-weight: bold;
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 30px;
+            color: white;
+            cursor: pointer;
+            z-index: 1;
+        }
+
+        /* Enhanced Movie Card */
+        .movie-card {
+            position: relative;
+        }
+
+        .movie-card-preview {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .movie-card:hover .movie-card-preview {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-links">
+            <img src="netflix-logo.png" alt="Netflix" class="netflix-logo">
+            <a href="#" class="nav-item">Home</a>
+            <a href="#" class="nav-item">TV Shows</a>
+            <a href="#" class="nav-item">Movies</a>
+            <a href="#" class="nav-item">New & Popular</a>
+            <a href="#" class="nav-item">My List</a>
+            <a href="#" class="nav-item">Browse by Languages</a>
+            
+            <div class="profile-menu">
+                <img src="profile1.png" alt="Profile" class="profile-icon">
+            </div>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Movie Title</h1>
+            <p class="hero-description">
+                Movie description goes here. This is a brief overview of the movie's plot without giving away too much.
+            </p>
+            <div class="hero-buttons">
+                <button class="play-button">
+                    <svg width="24" height="24" viewBox="0 0 24 24">
+                        <path d="M6 4l15 8-15 8V4z" fill="currentColor"></path>
+                    </svg>
+                    Play
+                </button>
+                <button class="more-info">
+                    <svg width="24" height="24" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" fill="currentColor"></path>
+                    </svg>
+                    More Info
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <h2 class="row-title">Trending Now</h2>
+        <div class="movies-slider">
+            <!-- Repeat for multiple movies -->
+            <div class="movie-card">
+                <img src="movie1.jpg" alt="Movie 1">
+            </div>
+            <!-- Add more movie cards -->
+        </div>
+    </div>
+
+    <div class="row">
+        <h2 class="row-title">Continue Watching</h2>
+        <div class="movies-slider">
+            <!-- Repeat for multiple movies -->
+            <div class="movie-card">
+                <img src="movie2.jpg" alt="Movie 2">
+            </div>
+            <!-- Add more movie cards -->
+        </div>
+    </div>
+
+    <div class="search-container">
+        <input type="text" class="search-input" placeholder="Titles, people, genres">
+        <svg class="search-icon" width="24" height="24" viewBox="0 0 24 24">
+            <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="currentColor"></path>
+        </svg>
+    </div>
+
+    <div class="movie-modal" id="movieModal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-hero">
+                <video class="modal-video" autoplay muted>
+                    <source src="trailer.mp4" type="video/mp4">
+                </video>
+                <div class="modal-hero-content">
+                    <h2 class="modal-title">Movie Title</h2>
+                    <div class="modal-actions">
+                        <button class="play-button">
+                            <svg width="24" height="24" viewBox="0 0 24 24">
+                                <path d="M6 4l15 8-15 8V4z" fill="currentColor"></path>
+                            </svg>
+                            Play
+                        </button>
+                        <button class="add-list">
+                            <svg width="24" height="24" viewBox="0 0 24 24">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" fill="currentColor"></path>
+                            </svg>
+                        </button>
+                        <button class="rate-button">
+                            <svg width="24" height="24" viewBox="0 0 24 24">
+                                <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="currentColor"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-info">
+                <div class="modal-details">
+                    <span class="match">98% Match</span>
+                    <span class="year">2024</span>
+                    <span class="maturity">TV-MA</span>
+                    <span class="duration">2h 15m</span>
+                    <span class="quality">HD</span>
+                </div>
+                <p class="modal-description">
+                    Detailed movie description goes here. This provides more information about the plot, 
+                    cast, and other interesting details about the movie or show.
+                </p>
+                <div class="modal-meta">
+                    <div class="cast">
+                        <span class="label">Cast:</span>
+                        Actor 1, Actor 2, Actor 3
+                    </div>
+                    <div class="genres">
+                        <span class="label">Genres:</span>
+                        Action, Adventure, Drama
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Navbar background change on scroll
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 100) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Movie card hover effect with delay
+        document.querySelectorAll('.movie-card').forEach(card => {
+            let timeout;
+            card.addEventListener('mouseenter', () => {
+                timeout = setTimeout(() => {
+                    card.style.transform = 'scale(1.4)';
+                }, 300);
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                clearTimeout(timeout);
+                card.style.transform = 'scale(1)';
+            });
+        });
+
+        // Modal functionality
+        const modal = document.getElementById('movieModal');
+        const closeModal = document.querySelector('.close-modal');
+
+        document.querySelectorAll('.movie-card, .more-info').forEach(element => {
+            element.addEventListener('click', () => {
+                modal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        closeModal.addEventListener('click', () => {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+
+        // Video preview on hover
+        document.querySelectorAll('.movie-card').forEach(card => {
+            const preview = document.createElement('video');
+            preview.className = 'movie-card-preview';
+            preview.muted = true;
+            preview.innerHTML = '<source src="preview.mp4" type="video/mp4">';
+            
+            card.addEventListener('mouseenter', () => {
+                card.appendChild(preview);
+                preview.play();
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                preview.remove();
+                preview.currentTime = 0;
+            });
+        });
+
+        // Search functionality
+        const searchInput = document.querySelector('.search-input');
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            document.querySelectorAll('.movie-card').forEach(card => {
+                const title = card.getAttribute('data-title').toLowerCase();
+                card.style.display = title.includes(searchTerm) ? 'block' : 'none';
+            });
+        });
+    </script>
+</body>
+</html> 
